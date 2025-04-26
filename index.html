@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<!-- Add class="dark" here initially if you want dark mode by default, otherwise JS handles it -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OUTA Online - Digital Services</title>
+    <!-- Link Font Awesome (already present) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Link Google Fonts (already present) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- REMOVE OLD CSS LINK -->
+    <!-- <link rel="stylesheet" href="css/styles.css"> -->
+
+    <!-- AOS Library CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <!-- Add Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
+            theme: {
+                extend: {
+                    colors: {
+                        // Define your "cool" color palette
+                        primary: { // Example: Purple shades
+                            light: '#a78bfa',
+                            DEFAULT: '#8b5cf6',
+                            dark: '#7c3aed'
+                        },
+                        secondary: { // Example: Teal/Cyan shades
+                            light: '#67e8f9',
+                            DEFAULT: '#22d3ee',
+                            dark: '#06b6d4'
+                        },
+                        accent: { // Example: Orange/Pink shades
+                             light: '#fb923c',
+                             DEFAULT: '#f97316',
+                             dark: '#ea580c'
+                        },
+                        // Define light/dark mode background and text colors
+                        'base-100': '#ffffff', // Light mode background
+                        'base-200': '#f3f4f6', // Light mode slightly darker bg
+                        'base-300': '#e5e7eb', // Light mode even darker bg
+                        'base-content': '#1f2937', // Light mode text
+                        'base-content-secondary': '#6b7280', // Light mode secondary text
+
+                        'base-100-dark': '#111827', // Dark mode background
+                        'base-200-dark': '#1f2937', // Dark mode slightly lighter bg
+                        'base-300-dark': '#374151', // Dark mode even lighter bg
+                        'base-content-dark': '#f9fafb', // Dark mode text
+                        'base-content-secondary-dark': '#d1d5db', // Dark mode secondary text
+                    }
+                },
+                fontFamily: {
+                    'sans': ['Poppins', 'sans-serif'] // Ensure Poppins is used
+                }
+            }
+        }
+    </script>
+        <style type="text/tailwindcss">
+            /* Base Styles (Keep existing) */
+           body { @apply font-sans antialiased bg-base-200 dark:bg-base-200-dark text-base-content dark:text-base-content-dark transition-colors duration-300; }
+           /* Mobile nav toggle */
+           #main-nav { @apply hidden md:flex md:items-center; } /* Remove md:space-x-6 from here */
+           #main-nav.active { @apply flex; } /* Show mobile nav when active */
+    
+           /* --- NEW PILL STYLES --- */
+           /* Style the UL as the pill container on desktop */
+           #main-nav > ul {
+                @apply md:inline-flex md:items-center md:space-x-1 /* Layout */;
+                @apply md:bg-gray-200/60 dark:md:bg-gray-900/70 /* Backgrounds */;
+                @apply md:backdrop-blur-md /* Glass effect */;
+                @apply md:rounded-full /* Pill shape */;
+                @apply md:border md:border-gray-300/50 dark:md:border-gray-700/50 /* Subtle border */;
+                @apply md:px-2 md:py-1.5 /* Padding inside pill */;
+                @apply md:shadow-sm /* Optional subtle shadow */;
+           }
+           /* Style individual links within the pill on desktop */
+           #main-nav > ul > li > a {
+                /* Reset some mobile styles for desktop */
+                @apply block md:inline-block;
+                @apply py-2 px-3 md:px-4 md:py-1.5; /* Mobile padding default, Desktop padding specific */;
+                @apply rounded-lg md:rounded-full; /* Mobile rounding vs Pill item rounding */;
+                /* Text colors for desktop pill */
+                @apply text-base-content dark:text-base-content-dark md:text-gray-800 md:dark:text-gray-100;
+                 /* Remove default hover backgrounds/text for desktop, add new ones */
+                 @apply hover:bg-base-300 dark:hover:bg-base-300-dark md:hover:bg-black/10 md:dark:hover:bg-white/10;
+                 @apply md:hover:text-gray-900 md:dark:hover:text-white;
+                 @apply hover:text-primary dark:hover:text-primary-light; /* Keep mobile color change on hover? Optional */
+                 /* Ensure smooth transition */
+                 @apply transition-colors duration-200;
+            }
+    
+            /* Active link style (within the pill on desktop) */
+            #main-nav > ul > li > a.active {
+                /* Override default active text color for desktop */
+                 @apply text-primary dark:text-primary-light md:text-white;
+                /* Add background for desktop active state */
+                @apply md:bg-primary dark:md:bg-primary;
+                /* Ensure font weight if needed */
+                @apply font-semibold;
+                /* Remove other active text styles if conflicting */
+                 @apply md:hover:bg-primary dark:md:hover:bg-primary; /* Keep active bg on hover */
+             }
+    
+           /* --- END NEW PILL STYLES --- */
+    
+    
+           /* Form Styles etc. (Keep existing) */
+           input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+               @apply block w-full px-4 py-3 rounded-lg border border-base-300 dark:border-base-300-dark bg-base-100 dark:bg-base-200-dark placeholder-base-content-secondary dark:placeholder-base-content-secondary-dark focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition duration-200;
+           }
+           select {
+                @apply appearance-none bg-no-repeat bg-right pr-8;
+               /* Basic dropdown arrow */
+               background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+               background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px);
+               background-size: 5px 5px, 5px 5px;
+           }
+           label { @apply block text-sm font-medium mb-2 text-base-content dark:text-base-content-dark; }
+           .required { @apply text-red-500 ml-1; }
+           .error-message { @apply text-red-500 text-xs mt-1 hidden; } /* Hide by default */
+    
+           /* Success message visibility */
+           .form-success { @apply hidden; }
+           .form-success.visible { @apply block; }
+    
+            /* Ensure transitions (Keep existing) */
+           .feature-card, .service-card, .testimonial, .step, .social-icons a {
+                @apply transition-all duration-300 ease-in-out;
+           }
+           input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+                @apply transition duration-200;
+           }
+           button[type="submit"], .hero a, .process-cta a, .special-offer a {
+                @apply transition duration-300 transform; /* Ensure transform is included for scale */
+           }
+       </style>
+    <!-- Replace Microsoft Translator with improved Google Translate -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'ar,fr,es,de,zh-CN,ru,ja,hi,pt',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+        
+        // Function to handle language selection from custom buttons
+        function changeLanguage(langCode) {
+            // If langCode is 'en', reset to original language
+            if (langCode === 'en') {
+                var iframe = document.querySelector('.goog-te-menu-frame');
+                if (iframe) {
+                    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    var resetLink = innerDoc.querySelector('.goog-te-banner-frame');
+                    if (resetLink) {
+                        resetLink.click();
+                        return;
+                    }
+                }
+                
+                // Alternative reset method
+                var teCombo = document.querySelector('.goog-te-combo');
+                if (teCombo) {
+                    teCombo.value = 'en';
+                    teCombo.dispatchEvent(new Event('change'));
+                }
+                return;
+            }
+            
+            // Delay slightly to ensure Google Translate has initialized
+            setTimeout(function() {
+                // Find the Google translate dropdown
+                var teCombo = document.querySelector('.goog-te-combo');
+                if (teCombo) {
+                    // Set the value & trigger change event
+                    teCombo.value = langCode;
+                    teCombo.dispatchEvent(new Event('change'));
+                }
+            }, 500);
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+    <style>
+        /* Hide Google Translate elements we don't want to show */
+        .goog-te-banner-frame,
+        .goog-te-balloon-frame,
+        #goog-gt-tt {
+            display: none !important;
+        }
+        
+        body {
+            top: 0 !important;
+        }
+        
+        /* Hide Google Translate link */
+        .goog-te-gadget {
+            font-family: 'Poppins', sans-serif !important;
+            color: transparent !important;
+        }
+        
+        .goog-te-gadget img,
+        .goog-te-gadget-icon,
+        .goog-te-gadget a {
+            display: none !important;
+        }
+        
+        .goog-te-gadget .goog-te-combo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        /* Quick language selector styling */
+        .quick-langs {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .quick-langs button {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            color: white;
+            background-color: var(--tw-color-primary-default, #8b5cf6);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-langs button:hover {
+            background-color: var(--tw-color-primary-dark, #7c3aed);
+            transform: scale(1.05);
+        }
+        
+        /* Cool language dropdown styling */
+        .language-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .language-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--tw-color-primary-default, #8b5cf6);
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .dark .language-dropdown-btn {
+            background-color: rgba(167, 139, 250, 0.1);
+            color: var(--tw-color-primary-light, #a78bfa);
+            border-color: rgba(167, 139, 250, 0.2);
+        }
+        
+        .language-dropdown-btn:hover {
+            background-color: rgba(139, 92, 246, 0.2);
+        }
+        
+        .dark .language-dropdown-btn:hover {
+            background-color: rgba(167, 139, 250, 0.2);
+        }
+        
+        /* Custom language menu */
+        .language-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem;
+            display: none;
+            min-width: 150px;
+            z-index: 100;
+        }
+        
+        .dark .language-menu {
+            background-color: #1f2937;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+        }
+        
+        .language-menu.show {
+            display: block;
+        }
+        
+        .language-menu button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.25rem;
+            color: var(--tw-color-base-content, #1f2937);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .dark .language-menu button {
+            color: var(--tw-color-base-content-dark, #f9fafb);
+        }
+        
+        .language-menu button:hover {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--tw-color-primary-default, #8b5cf6);
+        }
+        
+        .dark .language-menu button:hover {
+            background-color: rgba(167, 139, 250, 0.1);
+            color: var(--tw-color-primary-light, #a78bfa);
+        }
+        
+        /* Add the standard container for Google Translate */
+        #google_translate_element {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="relative">
+    <!-- Header -->
+        <!-- Header -->
+        <header class="bg-base-100 dark:bg-base-100-dark shadow-md sticky top-0 z-50 transition-colors duration-300">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <!-- Logo -->
+                <div class="logo flex-shrink-0" data-aos="fade-down" data-aos-delay="100">
+                    <a href="index.html">
+                        <img src="assets/outa-logo.png" alt="OUTA Online Logo" class="h-10 md:h-12">
+                    </a>
+                </div>
+    
+                <!-- Navigation -->
+                <!-- Needs adjustments for absolute positioning on mobile vs centered flex on desktop -->
+                <nav id="main-nav" class="absolute md:relative top-full left-0 w-full md:w-auto md:flex-grow  bg-base-100 dark:bg-base-100-dark md:bg-transparent dark:md:bg-transparent shadow-md md:shadow-none p-4 md:p-0 flex-col md:flex-row md:items-center md:justify-center space-y-4 md:space-y-0">
+                    <!-- This UL gets the pill styling via the CSS block above -->
+                    <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0" data-aos="fade-down" data-aos-delay="200">
+                        <!-- Add .active class here -->
+                        <li><a href="index.html" class="active">Home</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="request.html">Request</a></li>
+                    </ul>
+                     <!-- Translation Selector - Mobile Only -->
+                     <div class="md:hidden mt-4">
+                         <div class="quick-langs">
+                             <button onclick="changeLanguage('ar')">العربية</button>
+                             <button onclick="changeLanguage('fr')">Français</button>
+                             <button onclick="changeLanguage('es')">Español</button>
+                             <button onclick="changeLanguage('de')">Deutsch</button>
+                             <button onclick="changeLanguage('zh-CN')">中文</button>
+                             <button onclick="changeLanguage('ru')">Русский</button>
+                             <button onclick="changeLanguage('ja')">日本語</button>
+                         </div>
+                     </div>
+                     <!-- Dark Mode Toggle - Mobile Nav (Stays inside for mobile layout) -->
+                     <button id="darkModeToggleMobile" class="md:hidden mt-4 w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark dark:bg-secondary dark:hover:bg-secondary-dark dark:text-gray-900">
+                         <!-- JS updates innerHTML -->
+                         <i class="fas fa-moon mr-2"></i> <span>Dark Mode</span>
+                     </button>
+                </nav>
+    
+                <!-- Right side buttons -->
+                 <div class="flex items-center space-x-3 flex-shrink-0" data-aos="fade-down" data-aos-delay="300">
+                      <!-- Translation Selector - Desktop -->
+                      <div class="language-dropdown hidden md:block">
+                          <button id="languageToggle" class="language-dropdown-btn">
+                              <i class="fas fa-globe text-sm"></i>
+                              <span>Translate</span>
+                          </button>
+                          <div class="language-menu" id="languageMenu">
+                              <button onclick="changeLanguage('ar')">العربية (Arabic)</button>
+                              <button onclick="changeLanguage('fr')">Français (French)</button>
+                              <button onclick="changeLanguage('es')">Español (Spanish)</button>
+                              <button onclick="changeLanguage('de')">Deutsch (German)</button>
+                              <button onclick="changeLanguage('zh-CN')">中文 (Chinese)</button>
+                              <button onclick="changeLanguage('ru')">Русский (Russian)</button>
+                              <button onclick="changeLanguage('ja')">日本語 (Japanese)</button>
+                              <button onclick="changeLanguage('hi')">हिन्दी (Hindi)</button>
+                              <button onclick="changeLanguage('pt')">Português (Portuguese)</button>
+                              <button onclick="changeLanguage('en')">English (Original)</button>
+                          </div>
+                          <div id="google_translate_element"></div>
+                      </div>
+                      <!-- Dark Mode Toggle - Desktop -->
+                      <button id="darkModeToggle" class="hidden md:block text-base-content hover:text-primary dark:text-base-content-dark dark:hover:text-primary-light p-2 rounded-full hover:bg-base-200 dark:hover:bg-base-300-dark transition-colors duration-200">
+                         <!-- JS updates innerHTML -->
+                         <i class="fas fa-moon text-xl"></i>
+                     </button>
+                     <!-- Menu Toggle -->
+                     <div class="menu-toggle md:hidden">
+                         <button id="menu-btn" class="text-base-content dark:text-base-content-dark focus:outline-none">
+                             <i class="fas fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                 </div>
+            </div>
+        </header>
+
+    <!-- Hero Section -->
+    <section class="hero bg-gradient-to-br from-primary to-purple-700 dark:from-primary-dark dark:to-purple-800 text-white py-20 md:py-32 relative overflow-hidden">
+        <div class="container mx-auto px-4 z-10 relative">
+            <div class="hero-content max-w-2xl text-center md:text-left mx-auto md:mx-0">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" data-aos="fade-right" data-aos-delay="200">
+                    Transform Your Digital Presence with <span class="text-secondary dark:text-secondary-light">OUTA.online</span>
+                </h1>
+                <p class="text-lg md:text-xl mb-8 text-purple-100 dark:text-purple-200" data-aos="fade-right" data-aos-delay="300">
+                    Your one-stop solution for high-quality digital services including promotional videos, social media management, landing pages, and e-commerce solutions.
+                </p>
+                <div data-aos="fade-up" data-aos-delay="400">
+                     <a href="services.html" class="inline-block bg-secondary dark:bg-secondary-light text-base-content-dark dark:text-gray-900 font-bold py-3 px-8 rounded-full text-lg hover:bg-secondary-dark dark:hover:bg-secondary-dark transition duration-300 transform hover:scale-105 shadow-lg">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+            <!-- Optional: Add a decorative graphic/image here if desired -->
+            <!-- <div class="absolute right-0 top-0 bottom-0 w-1/2 hidden lg:block">
+                <img src="assets/hero-graphic.svg" alt="" class="object-cover h-full w-full opacity-20">
+            </div> -->
+        </div>
+        <!-- Optional subtle background pattern -->
+         <div class="absolute inset-0 opacity-10 dark:opacity-5" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features py-16 lg:py-24 bg-base-100 dark:bg-base-100-dark transition-colors duration-300">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-primary dark:text-primary-light" data-aos="fade-up">Why Choose OUTA.online?</h2>
+            <p class="text-base-content-secondary dark:text-base-content-secondary-dark max-w-2xl mx-auto mb-12" data-aos="fade-up" data-aos-delay="100">We combine creativity with strategy to deliver digital solutions that drive results.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <!-- Feature Card 1 -->
+                <div class="feature-card bg-base-200 dark:bg-base-200-dark p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
+                    <div class="mb-4">
+                        <i class="fas fa-video text-4xl text-secondary dark:text-secondary-light"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-base-content dark:text-base-content-dark">Professional Media</h3>
+                    <p class="text-base-content-secondary dark:text-base-content-secondary-dark">High-quality promotional videos and Instagram Reels that engage your audience.</p>
+                </div>
+                <!-- Feature Card 2 -->
+                <div class="feature-card bg-base-200 dark:bg-base-200-dark p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
+                    <div class="mb-4">
+                        <i class="fas fa-globe text-4xl text-secondary dark:text-secondary-light"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-base-content dark:text-base-content-dark">Online Presence</h3>
+                    <p class="text-base-content-secondary dark:text-base-content-secondary-dark">Stunning landing pages and e-commerce solutions to boost your business.</p>
+                </div>
+                <!-- Feature Card 3 -->
+                <div class="feature-card bg-base-200 dark:bg-base-200-dark p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="400">
+                    <div class="mb-4">
+                        <i class="fas fa-comments text-4xl text-secondary dark:text-secondary-light"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-base-content dark:text-base-content-dark">Social Media</h3>
+                    <p class="text-base-content-secondary dark:text-base-content-secondary-dark">Expert management of your social media platforms to increase engagement.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offer Section -->
+    <section class="special-offer py-16 lg:py-20 bg-gradient-to-r from-accent-dark to-accent dark:from-accent-dark dark:to-accent text-white">
+        <div class="container mx-auto px-4 text-center">
+            <div class="offer-content max-w-xl mx-auto" data-aos="zoom-in-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-3">Special Offer for New Users</h2>
+                <h3 class="text-5xl md:text-6xl font-extrabold mb-6">Only 100 MAD</h3>
+                <ul class="mb-8 space-y-3 inline-block text-left text-lg">
+                    <li class="flex items-center"><i class="fas fa-check-circle text-green-300 mr-3 text-xl"></i> One landing page</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle text-green-300 mr-3 text-xl"></i> Three promotional videos</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle text-green-300 mr-3 text-xl"></i> One Instagram Reel</li>
+                </ul>
+                <div>
+                    <a href="request.html" class="inline-block bg-white text-accent-dark font-bold py-3 px-8 rounded-full text-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105 shadow-lg">
+                        Claim Offer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process py-16 lg:py-24 bg-base-100 dark:bg-base-100-dark transition-colors duration-300">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-primary dark:text-primary-light" data-aos="fade-up">How It Works</h2>
+            <p class="text-base-content-secondary dark:text-base-content-secondary-dark max-w-2xl mx-auto mb-16" data-aos="fade-up" data-aos-delay="100">Our streamlined process ensures clarity and timely delivery.</p>
+            <div class="relative">
+                <!-- Connecting Line (optional visual) -->
+                 <div class="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-base-300 dark:bg-base-300-dark -translate-y-4 -z-10 mx-16"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 md:gap-6 relative">
+                    <!-- Step 1 -->
+                    <div class="step text-center relative" data-aos="fade-up" data-aos-delay="200">
+                        <div class="step-number mx-auto mb-4 w-16 h-16 flex items-center justify-center bg-primary dark:bg-primary-dark text-white text-2xl font-bold rounded-full shadow-md border-4 border-base-100 dark:border-base-100-dark">1</div>
+                        <h3 class="text-xl font-semibold mb-2 text-base-content dark:text-base-content-dark">Submit Request</h3>
+                        <p class="text-base-content-secondary dark:text-base-content-secondary-dark">Fill out our simple form with your details and service needs.</p>
+                    </div>
+                     <!-- Step 2 -->
+                    <div class="step text-center relative" data-aos="fade-up" data-aos-delay="300">
+                        <div class="step-number mx-auto mb-4 w-16 h-16 flex items-center justify-center bg-primary dark:bg-primary-dark text-white text-2xl font-bold rounded-full shadow-md border-4 border-base-100 dark:border-base-100-dark">2</div>
+                        <h3 class="text-xl font-semibold mb-2 text-base-content dark:text-base-content-dark">Confirmation</h3>
+                        <p class="text-base-content-secondary dark:text-base-content-secondary-dark">We'll contact you to confirm your order and discuss details.</p>
+                    </div>
+                     <!-- Step 3 -->
+                    <div class="step text-center relative" data-aos="fade-up" data-aos-delay="400">
+                        <div class="step-number mx-auto mb-4 w-16 h-16 flex items-center justify-center bg-primary dark:bg-primary-dark text-white text-2xl font-bold rounded-full shadow-md border-4 border-base-100 dark:border-base-100-dark">3</div>
+                        <h3 class="text-xl font-semibold mb-2 text-base-content dark:text-base-content-dark">Development</h3>
+                        <p class="text-base-content-secondary dark:text-base-content-secondary-dark">Our team works on your project with precision and creativity.</p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="step text-center relative" data-aos="fade-up" data-aos-delay="500">
+                        <div class="step-number mx-auto mb-4 w-16 h-16 flex items-center justify-center bg-primary dark:bg-primary-dark text-white text-2xl font-bold rounded-full shadow-md border-4 border-base-100 dark:border-base-100-dark">4</div>
+                        <h3 class="text-xl font-semibold mb-2 text-base-content dark:text-base-content-dark">Delivery</h3>
+                        <p class="text-base-content-secondary dark:text-base-content-secondary-dark">Receive your completed project by the promised delivery date.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="process-cta mt-16" data-aos="fade-up" data-aos-delay="600">
+                <a href="request.html" class="inline-block bg-primary dark:bg-primary-dark text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-primary-dark dark:hover:bg-primary-dark transition duration-300 transform hover:scale-105 shadow-lg">
+                    Start Your Project
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-base-200-dark dark:bg-black text-gray-400 py-12 transition-colors duration-300">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- Footer Logo/About -->
+                <div class="footer-logo md:col-span-1">
+                    <img src="assets/outa-logo.png" alt="OUTA Online Logo" class="h-12 mb-4">
+                    <p class="text-lg font-semibold text-base-content-dark dark:text-base-content-dark">OUTA.online</p>
+                    <p class="mt-2 text-sm">Elevating your digital footprint.</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-links">
+                    <h4 class="text-lg font-semibold mb-4 text-base-content-dark dark:text-white">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="hover:text-secondary dark:hover:text-secondary-light transition duration-200">Home</a></li>
+                        <li><a href="services.html" class="hover:text-secondary dark:hover:text-secondary-light transition duration-200">Services</a></li>
+                        <li><a href="request.html" class="hover:text-secondary dark:hover:text-secondary-light transition duration-200">Request</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Us -->
+                <div class="footer-contact">
+                     <h4 class="text-lg font-semibold mb-4 text-base-content-dark dark:text-white">Contact Us</h4>
+                     <p class="flex items-center mb-2"><i class="fas fa-envelope w-5 mr-3 text-secondary dark:text-secondary-light"></i> onlineouta@gmail.com</p>
+                     <p class="flex items-center"><i class="fas fa-phone w-5 mr-3 text-secondary dark:text-secondary-light"></i> +212 628 769 172</p>
+                 </div>
+
+                 <!-- Social Media -->
+                 <div class="footer-social">
+                    <h4 class="text-lg font-semibold mb-4 text-base-content-dark dark:text-white">Connect</h4>
+                    <div class="social-icons flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=61575069573307" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-base-300-dark dark:bg-gray-700 hover:bg-primary dark:hover:bg-primary text-white rounded-full flex items-center justify-center transition duration-200 transform hover:scale-110">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/outa.online/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-base-300-dark dark:bg-gray-700 hover:bg-primary dark:hover:bg-primary text-white rounded-full flex items-center justify-center transition duration-200 transform hover:scale-110">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://x.com/outaonline" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-base-300-dark dark:bg-gray-700 hover:bg-primary dark:hover:bg-primary text-white rounded-full flex items-center justify-center transition duration-200 transform hover:scale-110">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom border-t border-gray-700 pt-8 mt-8 text-center text-sm">
+                <p>© 2025 OUTA.online. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS Library JS -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
